@@ -1,0 +1,20 @@
+{
+  "string": [
+    {
+      "name": "app_name",
+      "value": "mtorrent"
+    },
+    {
+      "name": "module_desc",
+      "value": "$string:app_name"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "$string:app_name"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "$string:app_name"
+    }
+  ]
+}

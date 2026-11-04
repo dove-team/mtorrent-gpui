@@ -1,0 +1,41 @@
+task:
+  add: "Add New Download Task"
+  remove: "Remove"
+  default_name: "Task %{id}"
+  download_name: "Download %{id}"
+  magnet_label: "Magnet link or file path:"
+  select_file: "Select..."
+  torrent_filter: "Torrent Files"
+  start: "Start Download"
+  stop: "Stop Download"
+
+status:
+  idle: Idle
+  loading: Loading...
+  downloading: Downloading
+  stopped: Stopped
+  completed: Completed
+  failed: Failed
+  line: "Status: %{status} | Downloaded: %{downloaded} / %{total} (%{kib})"
+
+peers:
+  count: "Connected Peers: %{count}"
+  expand: Show
+  collapse: Hide
+  unknown_client: n/a
+  address: Address
+  client: Client
+  origin: Origin
+  protocol: Protocol
+  downloaded: Downloaded
+  uploaded: Uploaded
+  origin_tracker: Tracker
+  origin_listener: Listener
+  origin_pex: PEX
+  origin_dht: DHT
+  origin_other: Other
+
+errors:
+  already_running: "mtorrent is already running."
+
+language: Language

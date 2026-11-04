@@ -1,0 +1,8 @@
+[workspace]
+resolver = "3"
+members = ["core", "desktop", "ohos/native"]
+
+[profile.release]
+opt-level = "s"
+lto = "thin"
+strip = "debuginfo"

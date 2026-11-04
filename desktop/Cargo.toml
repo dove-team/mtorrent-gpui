@@ -1,0 +1,21 @@
+[package]
+name = "mtorrent-gpui-desktop"
+version = "0.10.1"
+edition = "2021"
+license = "Apache-2.0"
+description = "Desktop front end for the shared mtorrent GPUI core"
+
+[[bin]]
+name = "mtorrent-gpui-desktop"
+path = "src/main.rs"
+
+[dependencies]
+gpui = { package = "gpui-pre", version = "=0.3.11", default-features = false }
+gpui-platform = { package = "gpui-pre-platform", version = "=0.3.11" }
+mtorrent-gpui-core = { path = "../core" }
+tokio = { version = "1.54.1", features = ["rt", "sync"] }
+dirs-next = "2.0.0"
+env_logger = "0.11.11"
+image = "0.25.10"
+log = "0.4.35"
+rfd = "0.17.2"

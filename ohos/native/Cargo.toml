@@ -1,0 +1,25 @@
+[package]
+name = "mtorrent-gpui-ohos"
+version = "0.10.1"
+edition = "2021"
+license = "Apache-2.0"
+description = "OpenHarmony NAPI entry for the shared mtorrent GPUI core"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+gpui = { package = "gpui-pre", version = "=0.3.11", default-features = false }
+gpui-ohos = "=0.0.1-beta.0"
+mtorrent-gpui-core = { path = "../../core" }
+ohos-fileuri-binding = "0.2.4"
+ohos-hilog-binding = { version = "0.2.5", features = ["log"] }
+openharmony-ability = "=1.0.0-beta.5"
+openharmony-ability-derive = "=1.0.0-beta.5"
+openharmony-ability-plugin-files = "=1.0.0-beta.5"
+napi-derive-ohos = "=1.2.0"
+napi-ohos = "=1.2.0"
+log = "0.4.35"
+
+[build-dependencies]
+napi-build-ohos = "=1.2.0"

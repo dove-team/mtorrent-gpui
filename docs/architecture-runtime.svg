@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="730" viewBox="0 0 1180 730" font-family="Segoe UI, Microsoft YaHei, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="t" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+
+  <rect width="1180" height="730" fill="#ffffff"/>
+  <text x="40" y="34" font-size="19" font-weight="600" fill="#0f172a">mtorrent-gpui-ohos 分层与线程模型</text>
+  <text x="40" y="56" font-size="13" fill="#64748b">UI 只在 GPUI 主线程改；引擎线程只写 Mutex 快照，靠 waker 请求重绘</text>
+
+  <!-- column x: C1 40-370, C2 400-730, C3 760-1140 ; gutters 385 and 745 -->
+
+  <!-- L1 label -->
+  <text x="40" y="92" font-size="13" font-weight="600" fill="#334155">L1 ArkTS / Ability 层</text>
+  <g>
+    <rect x="40" y="100" width="330" height="62" rx="7" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="54" y="124" font-size="13" fill="#0f172a">EntryAbility extends NativeAbility</text>
+    <text x="54" y="142" font-size="12" fill="#64748b">moduleName + bridgePlugins</text>
+
+    <rect x="400" y="100" width="330" height="62" rx="7" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="414" y="124" font-size="13" fill="#0f172a">want 参数与初始 URI</text>
+    <text x="414" y="142" font-size="12" fill="#64748b">take_initial_want_uri = magnet 入口</text>
+
+    <rect x="760" y="100" width="380" height="62" rx="7" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="774" y="124" font-size="13" fill="#0f172a">module.json5</text>
+    <text x="774" y="142" font-size="12" fill="#64748b">launchType singleton、权限申请、rawfile 资源</text>
+  </g>
+
+  <!-- L2 -->
+  <text x="40" y="200" font-size="13" font-weight="600" fill="#334155">L2 GPUI 主线程（唯一改 UI 的地方）</text>
+  <g>
+    <rect x="40" y="208" width="330" height="62" rx="7" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="54" y="232" font-size="13" fill="#0f172a">ohos/native/src/lib.rs · #[ability]</text>
+    <text x="54" y="250" font-size="12" fill="#1e3a8a">try_current_platform → ApplicationHandle / AsyncApp</text>
+
+    <rect x="400" y="208" width="330" height="62" rx="7" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="414" y="232" font-size="13" fill="#0f172a">core/src/app_view.rs + core/src/ui/</text>
+    <text x="414" y="250" font-size="12" fill="#1e3a8a">两端共用视图：List / grid_cols / 进度条 / 卡片</text>
+
+    <rect x="760" y="208" width="380" height="62" rx="7" fill="#dbeafe" stroke="#2563eb"/>
+    <text x="774" y="232" font-size="13" fill="#0f172a">ohos/native/src/host.rs · core/src/logging.rs</text>
+    <text x="774" y="250" font-size="12" fill="#1e3a8a">实现 core::Host：base_path、show_file_dialog、通知、hilog</text>
+  </g>
+
+  <!-- L3 -->
+  <text x="40" y="308" font-size="13" font-weight="600" fill="#334155">L3 共享状态（不依赖任何 UI 框架）</text>
+  <g>
+    <rect x="40" y="316" width="330" height="62" rx="7" fill="#dcfce7" stroke="#0f766e"/>
+    <text x="54" y="340" font-size="13" fill="#0f172a">core/src/state/progress.rs</text>
+    <text x="54" y="358" font-size="12" fill="#134e4a">Mutex&lt;DownloadProgress&gt;，1 秒一次快照</text>
+
+    <rect x="400" y="316" width="330" height="62" rx="7" fill="#dcfce7" stroke="#0f766e"/>
+    <text x="414" y="340" font-size="13" fill="#0f172a">run_id 世代 + TaskStatus</text>
+    <text x="414" y="358" font-size="12" fill="#134e4a">丢弃停止后迟到的快照</text>
+
+    <rect x="760" y="316" width="380" height="62" rx="7" fill="#dcfce7" stroke="#0f766e"/>
+    <text x="774" y="340" font-size="13" fill="#0f172a">core/src/engine/task.rs + host.rs</text>
+    <text x="774" y="358" font-size="12" fill="#134e4a">Canceller · in_flight · trait Host（平台能力入口）</text>
+  </g>
+
+  <!-- L4 -->
+  <text x="40" y="416" font-size="13" font-weight="600" fill="#334155">L4 引擎线程区（沿用 mtorrent-egui 现有编排，未新增常驻组件）</text>
+  <g>
+    <rect x="40" y="424" width="330" height="62" rx="7" fill="#fef9c3" stroke="#a16207"/>
+    <text x="54" y="448" font-size="13" fill="#0f172a">app 线程 · LocalSet</text>
+    <text x="54" y="466" font-size="12" fill="#713f12">single_torrent，future 为 !Send</text>
+
+    <rect x="400" y="424" width="330" height="62" rx="7" fill="#fef9c3" stroke="#a16207"/>
+    <text x="414" y="448" font-size="13" fill="#0f172a">pwp 线程 · storage 线程</text>
+    <text x="414" y="466" font-size="12" fill="#713f12">协议与 tracker IO / 分片落盘</text>
+
+    <rect x="760" y="424" width="380" height="62" rx="7" fill="#fef9c3" stroke="#a16207"/>
+    <text x="774" y="448" font-size="13" fill="#0f172a">dht 线程</text>
+    <text x="774" y="466" font-size="12" fill="#713f12">launch_dht_node_runtime → CommandSink</text>
+  </g>
+
+  <!-- L5 -->
+  <text x="40" y="524" font-size="13" font-weight="600" fill="#334155">L5 依赖层（core 只依赖 gpui-pre，平台后端由 ohos/native 与 desktop 各自引入）</text>
+  <g>
+    <rect x="40" y="532" width="330" height="62" rx="7" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="54" y="556" font-size="13" fill="#0f172a">mtorrent 0.10.1（不改一行）</text>
+    <text x="54" y="574" font-size="12" fill="#64748b">target_os="linux", target_env="ohos"</text>
+
+    <rect x="400" y="532" width="330" height="62" rx="7" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="414" y="556" font-size="13" fill="#0f172a">tokio 1.54 走 Linux 分支</text>
+    <text x="414" y="574" font-size="12" fill="#64748b">mio epoll / socket2 已认 ohos</text>
+
+    <rect x="760" y="532" width="380" height="62" rx="7" fill="#f1f5f9" stroke="#94a3b8"/>
+    <text x="774" y="556" font-size="13" fill="#0f172a">gpui-ohos beta.0 ／ gpui-pre-platform 0.3.11</text>
+    <text x="774" y="574" font-size="12" fill="#64748b">鸿蒙后端 ／ 桌面后端（cfg_select 显式排除 ohos）</text>
+  </g>
+
+  <!-- vertical flows in gutters, no box crossing -->
+  <line x1="1122" y1="316" x2="1122" y2="270" stroke="#2563eb" stroke-width="1.8" marker-end="url(#b)"/>
+  <line x1="1122" y1="424" x2="1122" y2="378" stroke="#0f766e" stroke-width="1.8" marker-end="url(#t)"/>
+  <line x1="565" y1="162" x2="565" y2="208" stroke="#475569" stroke-width="1.6" marker-end="url(#g)"/>
+  <line x1="950" y1="162" x2="950" y2="208" stroke="#475569" stroke-width="1.6" marker-end="url(#g)"/>
+  <line x1="565" y1="486" x2="565" y2="532" stroke="#475569" stroke-width="1.6" marker-end="url(#g)"/>
+  <line x1="950" y1="486" x2="950" y2="532" stroke="#475569" stroke-width="1.6" marker-end="url(#g)"/>
+  <line x1="385" y1="240" x2="385" y2="440" stroke="#475569" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#g)"/>
+  <line x1="745" y1="440" x2="745" y2="240" stroke="#475569" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#g)"/>
+
+  <!-- legend -->
+  <rect x="40" y="620" width="1100" height="86" rx="8" fill="#f8fafc" stroke="#cbd5e1"/>
+  <line x1="60" y1="644" x2="92" y2="644" stroke="#2563eb" stroke-width="1.8" marker-end="url(#b)"/>
+  <text x="104" y="648" font-size="12.5" fill="#0f172a">主线程 render 时读 Mutex 快照并绘制（每帧只读，不在 render 里加锁写入）</text>
+  <line x1="60" y1="670" x2="92" y2="670" stroke="#0f766e" stroke-width="1.8" marker-end="url(#t)"/>
+  <text x="104" y="674" font-size="12.5" fill="#0f172a">引擎 StateListener 每秒写 Mutex，再经 UiSignal 通道让主线程 pump 调 AsyncApp.refresh 重绘</text>
+  <line x1="60" y1="696" x2="92" y2="696" stroke="#475569" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#g)"/>
+  <text x="104" y="700" font-size="12.5" fill="#0f172a">灰色双向虚线为跨层调用：向下发开始/停止（handle.spawn + Canceller），向上回结果与错误</text>
+
+  <text x="40" y="722" font-size="12" fill="#94a3b8">取消必须 resolve cancel 后继续 poll 到 future 结束；直接 drop 会跳过 UPnP 端口映射清理。</text>
+</svg>

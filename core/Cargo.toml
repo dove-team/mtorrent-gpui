@@ -1,0 +1,19 @@
+[package]
+name = "mtorrent-gpui-core"
+version = "0.10.1"
+edition = "2021"
+license = "Apache-2.0"
+description = "Platform-neutral engine bridge, state and GPUI views shared by the OHOS and desktop targets"
+
+[dependencies]
+gpui = { package = "gpui-pre", version = "=0.3.11", default-features = false }
+file-rotate = "0.8.0"
+log = "0.4.35"
+mtorrent = "0.10.1"
+parking_lot = "0.13.0"
+rust-i18n = "4.2.4"
+tokio = { version = "1.54.1", features = ["rt", "sync"] }
+unicode-segmentation = "1.13.3"
+
+[dev-dependencies]
+gpui = { package = "gpui-pre", version = "=0.3.11", default-features = false, features = ["test-support"] }
